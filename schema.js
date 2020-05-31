@@ -1,5 +1,7 @@
 // const axios = require('axios');
 // import sequelize
+const { Bug } = require('./models');
+const model = require('./models')
 
 const {
     GraphQLObjectType,
@@ -49,8 +51,10 @@ const RootQuery = new GraphQLObjectType({
 
                 // Query database with Sequelize
 
-                console.log('res in server', res)
-                return res.data;
+                const bugs = await Bug.findAll({
+                    attributes: ['id', 'title']
+                });
+                return bugs
             }
         },
         bug: {
