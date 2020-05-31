@@ -1,7 +1,9 @@
-const axios = require('axios');
+// const axios = require('axios');
+// import sequelize
 
 const {
     GraphQLObjectType,
+    GraphQLID,
     GraphQLInt,
     GraphQLString,
     GraphQLBoolean,
@@ -9,28 +11,28 @@ const {
     GraphQLSchema
 } = require('graphql');
 
-//Launch Type
-const LaunchType = new GraphQLObjectType({
-    name: 'Launch',
+//Bug Type
+const BugType = new GraphQLObjectType({
+    name: 'Bug',
     fields: () => ({
-        flight_number: { type: GraphQLInt },
-        mission_name: { type: GraphQLString },
-        launch_year: { type: GraphQLString },
-        launch_date_local: { type: GraphQLString },
-        launch_success: { type: GraphQLBoolean },
-        rocket: { type: RocketType },
-
+        id: { type: GraphQLID },
+        title: { type: GraphQLString },
+        description: { type: GraphQLString },
+        priorityLvl: { type: GraphQLInt },
+        projectId: { type: GraphQLInt },
+        assignedTo: { type: GraphQLInt },
+        isCompleted: { type: GraphQLBoolean }
     })
 });
 
-//Rocket Type
+//Project Type
 
-const RocketType = new GraphQLObjectType({
-    name: 'Rocket',
+const ProjectType = new GraphQLObjectType({
+    name: 'Project',
     fields: () => ({
-        rocket_id: { type: GraphQLString },
-        rocket_name: { type: GraphQLString },
-        rocket_type: { type: GraphQLString },
+        id: { type: GraphQLID },
+        name: { type: GraphQLString },
+        isComplete: { type: GraphQLBoolean },
     })
 });
 
@@ -39,37 +41,51 @@ const RocketType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        launches: {
-            type: new GraphQLList(LaunchType),
+        bugs: {
+            type: new GraphQLList(BugType),
             async resolve(parent, args) {
-                res = await axios.get('https://api.spacexdata.com/v3/launches');
+
+                // res = await axios.get('https://api.spacexdata.com/v3/launches');
+
+                // Query database with Sequelize
+
+                console.log('res in server', res)
                 return res.data;
             }
         },
-        launch: {
-            type: LaunchType,
+        bug: {
+            type: BugType,
             args: {
-                flight_number: { type: GraphQLInt }
+                bugId: { type: GraphQLInt }
             },
             async resolve(parent, args) {
-                res = await axios.get(`https://api.spacexdata.com/v3/launches/${args.flight_number}`);
+
+                // access db here
+
+                // res = await axios.get(`https://api.spacexdata.com/v3/launches/${args.flight_number}`);
                 return res.data;
             }
         },
-        rockets: {
-            type: new GraphQLList(RocketType),
+        projects: {
+            type: new GraphQLList(ProjectType),
             async resolve(parent, args) {
-                res = await axios.get('https://api.spacexdata.com/v3/rockets');
+
+                // access db
+
+                // res = await axios.get('https://api.spacexdata.com/v3/rockets');
                 return res.data;
             }
         },
-        rocket: {
-            type: RocketType,
+        project: {
+            type: ProjectType,
             args: {
-                flight_number: { type: GraphQLInt }
+                projectId: { type: GraphQLInt }
             },
             async resolve(parent, args) {
-                res = await axios.get(`https://api.spacexdata.com/v3/rockets/${args.id}`);
+
+                // hit db
+
+                // res = await axios.get(`https://api.spacexdata.com/v3/rockets/${args.id}`);
                 return res.data;
             }
         }
